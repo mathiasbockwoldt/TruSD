@@ -15,6 +15,10 @@ setuptools.setup(
     url='https://github.com/mathiasbockwoldt/TruSD',
     packages=setuptools.find_packages(),
     entry_points={'console_scripts': ['trusd = trusd.cli:main']},
+    install_requires=[
+        'numpy>=1.15.1',
+        'scipy>=0.16.0',
+    ],
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
@@ -23,5 +27,5 @@ setuptools.setup(
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    python_requires='>=3.6',
+    #python_requires='>=3.6',
 )
