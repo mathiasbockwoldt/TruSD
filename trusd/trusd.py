@@ -9,8 +9,14 @@ from scipy.special import comb
 @lru_cache(maxsize=None)
 def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 	'''
-	Returns the Wrigth-Fisher transition matrix given the selection coefficient,
-	the number of generations and the genetic population.
+	Calculates the Wrigth-Fisher transition matrix given the selection coefficient,
+	the number of generations and the genetic population. The calculation is
+	computatinally very expensive, so the result is cached.
+
+	@param selection_coefficient: The selection coefficient as float
+	@param num_generations: The generation number as integer
+	@param genepop: Gene population as integer
+	@returns: The Wright-Fisher transition matrix as numpy array with shape (genepop+1, genepop+1)
 	'''
 
 	matrix = np.full((genepop + 1, genepop + 1), np.nan, dtype=np.float64)
@@ -28,6 +34,17 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 
 
 def likelihood(selection_coefficient, proportion, time_points, trajectories, genepop):
+	'''
+	Calculates the likelihood at a given point.
+
+	@param selection_coefficient: The selection coefficient as float
+	@param proportion: The proportion as float
+	@param time_points: The time points to consider as list of integers
+	@param trajectories: The trajectories as list of integers
+	@param genepop: Gene population as integer
+	@returns: The likelihood for the given point as float
+	'''
+
 	result = 0
 	for time_index in range(len(time_points) - 1):
 		timepoint = time_points[time_index + 1] - time_points[time_index]
@@ -45,29 +62,33 @@ def likelihood(selection_coefficient, proportion, time_points, trajectories, gen
 	return result
 
 
-def likelihood_grid(trajectories, genepop, proportions, selections, tvec):
+def likelihood_grid(trajectories, genepop, proportions, selections, time_points):
+	'''
+	Calculates the likelihood for each point of a grid of selection coefficients
+	and proportions.
+
+	@param trajectories: The trajectories as list of integers
+	@param genepop: Gene population as integer
+	@param proportions: The proportions as list of floats
+	@param selections: The selection coefficients as list of floats
+	@param time_points: The time points to consider as list of integers
+	@returns: The likelihood for the given point as float
+	'''
+
 	plen = len(proportions)
 	slen = len(selections)
 
 	#calculates the log-likelihood for each point on the grid
-	mat = np.full((slen + 0, plen + 0), np.nan, dtype=np.float64)
+	mat = np.full((slen, plen), np.nan, dtype=np.float64)
 	for i in range(slen):
 		s = selections[i]
 		for j in range(plen):
 			p = proportions[j]
-			mat[i, j] = likelihood(s, p, tvec, trajectories, genepop)
+			mat[i, j] = likelihood(s, p, time_points, trajectories, genepop)
 
 	return mat
 
 
-def main(infile, outfile, genepop, proportions, selections, tvec):
-	trajectories = np.loadtxt(infile, delimiter=',', skiprows=1, dtype='uint16')
-
-	results = likelihood_grid(trajectories, genepop, proportions, selections, tvec)
-
-	np.savetxt(outfile, mat, delimiter=',')
-
-
 if __name__ == '__main__':
-	import cli
-	cli.main()
+	from .cli import main
+	main()

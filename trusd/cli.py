@@ -7,6 +7,17 @@ import trusd
 
 
 def parse_string_as_list(s, func, name, expected_length=0):
+	'''
+	Split a string by comma (,) and apply a function on each value. The function
+	is usually int or float to turn the values into numbers.
+
+	@param s: The string to parse
+	@param func: Function to apply on each value of the list
+	@param name: The name to report in case of an error
+	@param expected_length: Expected length (as integer) of the resulting list
+	@returns: A list with the values defined by the parameters
+	'''
+
 	lst = s.split(',')
 
 	if expected_length and len(lst) != expected_length:
@@ -23,6 +34,12 @@ def parse_string_as_list(s, func, name, expected_length=0):
 
 
 def main():
+	'''
+	Main function for the command line interface. Parse the command line arguments
+	and read a file, calculate the likelihoods in a grid and save the results to
+	another file.
+	'''
+
 	parser = argparse.ArgumentParser(description='TruSD co-infers selection coefficients and genetic drift from allele trajectories using a maximum-likelihood framework.')
 	parser.add_argument('infile', metavar='file.txt',
 						help='input file name')
@@ -63,4 +80,6 @@ def main():
 
 	times = parse_string_as_list(args.times, int, '--times')
 
-	trusd.main(args.infile, args.outfile, args.genepop, prop_list, selec_list, times)
+	trajectories = np.loadtxt(infile, delimiter=',', skiprows=1, dtype='uint16')
+	results = trusd.likelihood_grid(trajectories, args.genepop, prop_list, selec_list, times)
+	np.savetxt(outfile, results, delimiter=',')
