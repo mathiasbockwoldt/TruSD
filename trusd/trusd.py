@@ -45,19 +45,16 @@ def likelihood(selection_coefficient, proportion, time_points, trajectories, gen
 	return result
 
 
-def infer(trajectories, genepop, proportions, selections, tvec):
-	#creates a grid of parameters
-	pseq = np.arange(proportions[0], proportions[1] + proportions[2], proportions[2])
-	plen = len(pseq)
-	sseq = np.arange(selections[0], selections[1] + selections[2], selections[2])
-	slen = len(sseq)
+def likelihood_grid(trajectories, genepop, proportions, selections, tvec):
+	plen = len(proportions)
+	slen = len(selections)
 
 	#calculates the log-likelihood for each point on the grid
 	mat = np.full((slen + 0, plen + 0), np.nan, dtype=np.float64)
 	for i in range(slen):
-		s = sseq[i]
+		s = selections[i]
 		for j in range(plen):
-			p = pseq[j]
+			p = proportions[j]
 			mat[i, j] = likelihood(s, p, tvec, trajectories, genepop)
 
 	return mat
@@ -66,7 +63,7 @@ def infer(trajectories, genepop, proportions, selections, tvec):
 def main(infile, outfile, genepop, proportions, selections, tvec):
 	trajectories = np.loadtxt(infile, delimiter=',', skiprows=1, dtype='uint16')
 
-	results = infer(trajectories, genepop, proportions, selections, tvec)
+	results = likelihood_grid(trajectories, genepop, proportions, selections, tvec)
 
 	np.savetxt(outfile, mat, delimiter=',')
 

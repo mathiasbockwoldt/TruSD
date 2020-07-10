@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import sys
 import argparse
+import numpy as np
 import trusd
 
 
@@ -28,17 +30,37 @@ def main():
 						help='output file [default: %(default)s]')
 	parser.add_argument('-g', '--genepop', metavar='int', default=200, type=int,
 						help='population size [default: %(default)s]')
-	parser.add_argument('-p', '--proportion', metavar='start,stop,step', default='0,1,0.005',
-						help='proportion; give in the form start,stop,step without whitespace, where the values are integers or floats. [default: %(default)s]')
+	parser.add_argument('-p', '--proportion', metavar='start,stop,step', default=None,
+						help='proportion; give in the form start,stop,step without whitespace, where the values are integers or floats. Mutually exclusive with -P/--proplist.')
+	parser.add_argument('-P', '--proplist', metavar='p1,p2,...', default=None,
+						help='list of proportions; give in the form p1,p2,p3,... without whitespace, where px are integers or floats. Mutually exclusive with -p/--proportion.')
 	parser.add_argument('-s', '--selection', metavar='start,stop,step', default='-0.08,0.08,0.002',
-						help='selection coefficient; give in the form start,stop,step without whitespace, where the values are integers or floats. [default: %(default)s]')
+						help='selection coefficient; give in the form start,stop,step without whitespace, where the values are integers or floats. Mutually exclusive with -S/--seleclist.')
+	parser.add_argument('-S', '--seleclist', metavar='s1,s2,...', default=None,
+						help='list of selection coefficients; give in the form s1,s2,s3,... without whitespace, where sx are integers or floats. Mutually exclusive with -S/--sellist-')
 	parser.add_argument('-t', '--times', metavar='t1,t2,...', default='0,50',
-						help='time stemps; give in the form t1,t2,t3,... without whitespace, where t1 etc. are integers. [default: %(default)s]')
+						help='time stemps; give in the form t1,t2,t3,... without whitespace, where tx are integers. [default: %(default)s]')
 
 	args = parser.parse_args()
 
-	args.proportion = parse_string_as_list(args.proportion, float, '--proportion', 3)
-	args.selection = parse_string_as_list(args.selection, float, '--selection', 3)
-	args.times = parse_string_as_list(args.times, int, '--times')
+	if args.proportion:
+		prop = parse_string_as_list(args.proportion, float, '--proportion', 3)
+		prop_list = np.arange(prop[0], prop[1] + prop[2], prop[2])
+	elif args.proplist:
+		prop_list = np.array(parse_string_as_list(args.proplist, float, '--proplist'))
+	else:
+		print('Neither -p nor -P were given. Using default value -p 0,1,0.005', file=sys.stderr)
+		prop_list = np.arange(0, 1.005, 0.005)
 
-	trusd.main(args.infile, args.outfile, args.genepop, args.proportion, args.selection, args.times)
+	if args.selection:
+		selec = parse_string_as_list(args.selection, float, '--selection', 3)
+		selec_list = np.arange(selec[0], selec[1] + selec[2], selec[2])
+	elif args.seleclist:
+		selec_list = np.array(parse_string_as_list(args.seleclist, float, '--seleclist'))
+	else:
+		print('Neither -s nor -S were given. Using default value -s -0.08,0.08,0.002', file=sys.stderr)
+		selec_list = np.arange(-0.08, 0.082, 0.002)
+
+	times = parse_string_as_list(args.times, int, '--times')
+
+	trusd.main(args.infile, args.outfile, args.genepop, prop_list, selec_list, times)
