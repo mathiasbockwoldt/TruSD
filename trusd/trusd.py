@@ -9,7 +9,8 @@ from scipy.special import comb
 @lru_cache(maxsize=None)
 def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 	'''
-	This yields the same matrix as the R function.
+	Returns the Wrigth-Fisher transition matrix given the selection coefficient,
+	the number of generations and the genetic population.
 	'''
 
 	matrix = np.full((genepop + 1, genepop + 1), np.nan, dtype=np.float64)
@@ -44,15 +45,12 @@ def likelihood(selection_coefficient, proportion, time_points, trajectories, gen
 	return result
 
 
-def infer(infile, outfile, genepop, proportions, selections, tvec):
+def infer(trajectories, genepop, proportions, selections, tvec):
 	#creates a grid of parameters
 	pseq = np.arange(proportions[0], proportions[1] + proportions[2], proportions[2])
 	plen = len(pseq)
 	sseq = np.arange(selections[0], selections[1] + selections[2], selections[2])
 	slen = len(sseq)
-
-	traj = np.loadtxt(infile, delimiter=',', skiprows=1, dtype='uint16')
-
 
 	#calculates the log-likelihood for each point on the grid
 	mat = np.full((slen + 0, plen + 0), np.nan, dtype=np.float64)
@@ -60,13 +58,19 @@ def infer(infile, outfile, genepop, proportions, selections, tvec):
 		s = sseq[i]
 		for j in range(plen):
 			p = pseq[j]
-			mat[i, j] = likelihood(s, p, tvec, traj, genepop)
+			mat[i, j] = likelihood(s, p, tvec, trajectories, genepop)
 
-	print(wright_fisher_trans_matrix.cache_info()) # DEBUG caching
+	return mat
+
+
+def main(infile, outfile, genepop, proportions, selections, tvec):
+	trajectories = np.loadtxt(infile, delimiter=',', skiprows=1, dtype='uint16')
+
+	results = infer(trajectories, genepop, proportions, selections, tvec)
 
 	np.savetxt(outfile, mat, delimiter=',')
 
 
 if __name__ == '__main__':
-	from cli import main
-	main()
+	import cli
+	cli.main()

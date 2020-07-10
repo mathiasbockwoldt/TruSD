@@ -41,4 +41,4 @@ def main():
 	args.selection = parse_string_as_list(args.selection, float, '--selection', 3)
 	args.times = parse_string_as_list(args.times, int, '--times')
 
-	trusd.infer(args.infile, args.outfile, args.genepop, args.proportion, args.selection, args.times)
+	trusd.main(args.infile, args.outfile, args.genepop, args.proportion, args.selection, args.times)
