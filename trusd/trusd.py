@@ -25,7 +25,7 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 		for m in range(genepop + 1):
 			m_over_genepop = m / genepop
 			first_product = (m_over_genepop + selection_coefficient * m_over_genepop * (1 - m_over_genepop)) ** n
-			second_product = (1 - m_over_genepop - selection_coefficient * m_over_genepop*(1 - m_over_genepop))**(genepop - n)
+			second_product = (1 - m_over_genepop - selection_coefficient * m_over_genepop * (1 - m_over_genepop)) ** (genepop - n)
 			matrix[n, m] = comb(genepop, n) * first_product * second_product
 
 	matrix = np.linalg.matrix_power(matrix, num_generations)
@@ -78,7 +78,7 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 	plen = len(proportions)
 	slen = len(selections)
 
-	#calculates the log-likelihood for each point on the grid
+	# calculates the log-likelihood for each point on the grid
 	mat = np.full((slen, plen), np.nan, dtype=np.float64)
 	for i in range(slen):
 		s = selections[i]

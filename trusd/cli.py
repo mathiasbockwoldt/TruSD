@@ -80,6 +80,6 @@ def main():
 
 	times = parse_string_as_list(args.times, int, '--times')
 
-	trajectories = np.loadtxt(infile, delimiter=',', skiprows=1, dtype='uint16')
+	trajectories = np.loadtxt(args.infile, delimiter=',', skiprows=1, dtype='uint16')
 	results = trusd.likelihood_grid(trajectories, args.genepop, prop_list, selec_list, times)
-	np.savetxt(outfile, results, delimiter=',')
+	np.savetxt(args.outfile, results, delimiter=',')
