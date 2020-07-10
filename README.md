@@ -9,25 +9,28 @@ Citation...
 ```
 
 
-You should (soon) be able to install from PyPI:
+You should (after publication) be able to install from PyPI:
 
-```
-pip install trusd   # you might need to use pip3
+```sh
+pip3 install trusd
 ```
 
 You can also install it from source:
 
-```
-git clone git@github.com:mathiasbockwoldt/TruSD.git
-# OR
+```sh
 git clone https://github.com/mathiasbockwoldt/TruSD.git
-
 cd TruSD
-pip install -e .   # you might need to use pip3
+pip3 install -e .
 ```
 
 Either way, you should be able to run trusd from the command line afterwards:
 
-```
+```sh
 trusd --help
+```
+
+And you can import the trusd module from your Python script:
+
+```python
+import trusd
 ```
