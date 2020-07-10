@@ -40,7 +40,7 @@ def likelihood(selection_coefficient, proportion, time_points, trajectories, gen
 	@param selection_coefficient: The selection coefficient as float
 	@param proportion: The proportion as float
 	@param time_points: The time points to consider as list of integers
-	@param trajectories: The trajectories as list of integers
+	@param trajectories: The trajectories as numpy array with shape (???) TODO!!!################
 	@param genepop: Gene population as integer
 	@returns: The likelihood for the given point as float
 	'''
@@ -67,7 +67,7 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 	Calculates the likelihood for each point of a grid of selection coefficients
 	and proportions.
 
-	@param trajectories: The trajectories as list of integers
+	@param trajectories: The trajectories as numpy array with shape (???) TODO!!!################
 	@param genepop: Gene population as integer
 	@param proportions: The proportions as list of floats
 	@param selections: The selection coefficients as list of floats

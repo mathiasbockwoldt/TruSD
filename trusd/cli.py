@@ -54,7 +54,7 @@ def main():
 	parser.add_argument('-s', '--selection', metavar='start,stop,step', default='-0.08,0.08,0.002',
 						help='selection coefficient; give in the form start,stop,step without whitespace, where the values are integers or floats. Mutually exclusive with -S/--seleclist.')
 	parser.add_argument('-S', '--seleclist', metavar='s1,s2,...', default=None,
-						help='list of selection coefficients; give in the form s1,s2,s3,... without whitespace, where sx are integers or floats. Mutually exclusive with -S/--sellist-')
+						help='list of selection coefficients; give in the form s1,s2,s3,... without whitespace, where sx are integers or floats. Mutually exclusive with -S/--sellist.')
 	parser.add_argument('-t', '--times', metavar='t1,t2,...', default='0,50',
 						help='time stemps; give in the form t1,t2,t3,... without whitespace, where tx are integers. [default: %(default)s]')
 
