@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
-import sys
 import argparse
+import datetime
+import json
+import os
+import sys
+
 import numpy as np
 import trusd
 
@@ -51,7 +55,7 @@ def main():
 						help='proportion; give in the form start,stop,step without whitespace, where the values are integers or floats. Mutually exclusive with -P/--proplist.')
 	parser.add_argument('-P', '--proplist', metavar='p1,p2,...', default=None,
 						help='list of proportions; give in the form p1,p2,p3,... without whitespace, where px are integers or floats. Mutually exclusive with -p/--proportion.')
-	parser.add_argument('-s', '--selection', metavar='start,stop,step', default='-0.08,0.08,0.002',
+	parser.add_argument('-s', '--selection', metavar='start,stop,step', default=None,
 						help='selection coefficient; give in the form start,stop,step without whitespace, where the values are integers or floats. Mutually exclusive with -S/--seleclist.')
 	parser.add_argument('-S', '--seleclist', metavar='s1,s2,...', default=None,
 						help='list of selection coefficients; give in the form s1,s2,s3,... without whitespace, where sx are integers or floats. Mutually exclusive with -S/--sellist.')
@@ -83,3 +87,20 @@ def main():
 	trajectories = np.loadtxt(args.infile, delimiter=',', skiprows=1, dtype='uint16')
 	results = trusd.likelihood_grid(trajectories, args.genepop, prop_list, selec_list, times)
 	np.savetxt(args.outfile, results, delimiter=',')
+
+	info = {}
+	info['description'] = 'This file contains the information for the TruSD file saved in output_file.'
+	info['link'] = 'https://github.com/mathiasbockwoldt/TruSD'
+	info['citation'] = 'Mathias Bockwoldt, Charlie Sinclair, David Waxman, and Toni I. Gossmann: TruSD: A python package to co-estimate selection and drift from allele trajectories. In preparation.'
+	info['input_file'] = args.infile
+	info['output_file'] = args.outfile
+	info['datetime'] = datetime.datetime.now().replace(microsecond=0).isoformat()
+	info['command'] = ' '.join(sys.argv)
+	info['population_size'] = args.genepop
+	info['time_stamps'] = times
+	info['proportions'] = list(prop_list)
+	info['selection_coefficients'] = list(selec_list)
+
+	info_file = '{}.json'.format(os.path.splitext(args.outfile)[0])
+	with open(info_file, 'w') as out_stream:
+		json.dump(info, out_stream, indent=2)
