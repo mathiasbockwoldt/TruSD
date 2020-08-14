@@ -32,7 +32,7 @@ def contour_plot(filename, num_trajectories, s_value, p_value, contour_line_subt
 	fig, ax = plt.subplots(1, 1, figsize=(15, 15))
 	contour_plot = ax.contourf(X, Y, values, levels, colors=['#5affff', '#aaffff', '#d4ffff', '#ffffff', '#ffd5ff', '#ffaaff', '#ff80ff'])
 
-	fig.colorbar(contour_plot)
+	fig.colorbar(contour_plot, spacing='proportional')
 
 	if contour_line_subtract:
 		contour_line = ax.contour(X, Y, values, [max_values - contour_line_subtract], colors=['#000000'], linestyles=['solid'])
@@ -52,4 +52,4 @@ def contour_plot(filename, num_trajectories, s_value, p_value, contour_line_subt
 
 
 if __name__ == '__main__':
-	contour_plot(filename, num_trajectories, s_value, p_value, contour_line_subtract)
+	contour_plot(filename, num_trajectories, s_value, p_value, contour_line_subtract, False, True)
