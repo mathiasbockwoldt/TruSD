@@ -6,6 +6,7 @@ If you find the software useful in your research please cite us:
 
 > Mathias Bockwoldt, Charlie Sinclair, David Waxman, and Toni I. Gossmann: TruSD: A python package to co-estimate selection and drift from allele trajectories. In preparation.
 
+## Installation
 
 You should (after publication) be able to install from PyPI:
 
