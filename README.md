@@ -40,4 +40,5 @@ And you can import the trusd module from your Python script:
 
 ```python
 import trusd
+help(trusd) # gives package content
 ```
