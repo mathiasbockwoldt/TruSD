@@ -21,6 +21,14 @@ cd TruSD
 pip3 install -e .
 ```
 
+If you do not have root access, you can do a user specific install
+
+```sh
+git clone https://github.com/mathiasbockwoldt/TruSD.git
+cd TruSD
+pip3 install --user -e .
+```
+
 Either way, you should be able to run trusd from the command line afterwards:
 
 ```sh
