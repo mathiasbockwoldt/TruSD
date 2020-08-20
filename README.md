@@ -35,6 +35,7 @@ Either way, you should be able to run trusd from the command line afterwards:
 ```sh
 trusd --help
 ```
+## Running TruSD
 
 And you can import the trusd module from your Python script:
 
