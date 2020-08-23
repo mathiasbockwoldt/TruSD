@@ -115,7 +115,7 @@ def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
 
 
 	return np.loadtxt(
-		__strip_n_cols(args.infile, delimiter, skip_columns),
+		__strip_n_cols(fname, delimiter, skip_columns),
 		delimiter=delimiter,
 		skiprows=skip_rows,
 		dtype='uint16')
