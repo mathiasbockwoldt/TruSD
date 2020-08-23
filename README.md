@@ -8,6 +8,8 @@ If you find the software useful in your research please cite us:
 
 ## Installation
 
+TruSD needs Python 3.5 or newer. Python 2 is *not* supported!
+
 You should (after publication) be able to install from PyPI:
 
 ```sh
@@ -30,14 +32,15 @@ cd TruSD
 pip3 install --user -e .
 ```
 
-Either way, you should be able to run trusd from the command line afterwards:
+## Running TruSD
+
+After installation, you should be able to run trusd from the command line:
 
 ```sh
 trusd --help
 ```
-## Running TruSD
 
-And you can import the trusd module from your Python script:
+You can also import the trusd module from your Python 3 script:
 
 ```python
 import trusd
