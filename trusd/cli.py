@@ -47,6 +47,10 @@ def main():
 	parser = argparse.ArgumentParser(description='TruSD co-infers selection coefficients and genetic drift from allele trajectories using a maximum-likelihood framework.')
 	parser.add_argument('infile', metavar='file.txt',
 						help='input file name')
+	parser.add_argument('-d', '--delimiter', metavar='x', default=',',
+						help='delimiter for input file. Use "tab" or "space" for these special characters. [default: %(default)s]')
+	parser.add_argument('-c', '--colskip', metavar='n', default=0, type=int,
+						help='number of columns to skip from the beginning (left) [default: %(default)s]')
 	parser.add_argument('-o', '--outfile', metavar='outfile.csv', default='outfile.csv',
 						help='output file [default: %(default)s]')
 	parser.add_argument('-g', '--genepop', metavar='int', default=200, type=int,
@@ -84,7 +88,12 @@ def main():
 
 	times = parse_string_as_list(args.times, int, '--times')
 
-	trajectories = np.loadtxt(args.infile, delimiter=',', skiprows=1, dtype='uint16')
+	if args.delimiter == 'tab':
+		args.delimiter = '\t'
+	elif args.delimiter == 'space':
+		args.delimiter = ' '
+
+	trajectories = trusd.read_trajectory_file(args.infile, delimiter=args.delimiter, skip_columns=args.colskip)
 	results = trusd.likelihood_grid(trajectories, args.genepop, prop_list, selec_list, times)
 	np.savetxt(args.outfile, results, delimiter=',')
 

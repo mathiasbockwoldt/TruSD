@@ -72,7 +72,7 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 	@param proportions: The proportions as list of floats
 	@param selections: The selection coefficients as list of floats
 	@param time_points: The time points to consider as list of integers
-	@returns: The likelihood for the given point as float
+	@returns: The likelihood for each given point as numpy array of floats
 	'''
 
 	plen = len(proportions)
@@ -89,6 +89,33 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 	return mat
 
 
-if __name__ == '__main__':
-	from .cli import main
-	main()
+def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
+	'''
+	Reads a trajectory file for use in TruSD
+
+	@param fname: The file name of the trajectory file
+	@param delimiter: Column delimiter
+	@param skip_rows: Number of rows to skip in the beginning (header line(s))
+	@param skip_columns: Number of columns to skip from left
+	@returns: The contents of the trajectory file as numpy array
+	'''
+
+	def __strip_n_cols(fname, delimiter, skip_columns):
+		'''
+		Generator for reading in a file while skipping the first column.
+		Modified from https://stackoverflow.com/a/20624201
+		'''
+
+		with open(fname, 'r') as f:
+			for line in f:
+				try:
+					yield line.split(delimiter, skip_columns)[skip_columns]
+				except IndexError:
+					continue
+
+
+	return np.loadtxt(
+		__strip_n_cols(args.infile, delimiter, skip_columns),
+		delimiter=delimiter,
+		skiprows=skip_rows,
+		dtype='uint16')
