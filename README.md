@@ -46,6 +46,12 @@ After installation, you should be able to run trusd from the command line:
 trusd --help
 ```
 
+if this does not work you might want to add inhomes/tonig/.bashrc :
+
+```sh
+export PATH=/homes/tonig/.local/bin:$PATH
+```
+
 You can also import the trusd module from your Python 3 script:
 
 ```python
