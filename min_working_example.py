@@ -26,9 +26,9 @@ trajectories = trusd.read_trajectory_file(filename,
 # Calculate results (this step will take a lot of time!)
 results = trusd.likelihood_grid(trajectories,
                                 genepop=genepop,
-                                prop_list=properties,
-                                selec_list=sel_coeffs,
-                                times=times)
+                                proportions=properties,
+                                selections=sel_coeffs,
+                                time_points=time_steps)
 
 # Save results to "outfile"
 np.savetxt(outfile, results, delimiter=delimiter)
