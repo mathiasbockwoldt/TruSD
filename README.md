@@ -32,6 +32,12 @@ cd TruSD
 pip3 install --user -e .
 ```
 
+## Update
+
+```sh
+git pull
+```
+
 ## Running TruSD
 
 After installation, you should be able to run trusd from the command line:
