@@ -58,3 +58,9 @@ You can also import the trusd module from your Python 3 script:
 import trusd
 help(trusd) # gives package content
 ```
+
+You can start an example run with
+
+```sh
+python3 min_working_example.py
+```
