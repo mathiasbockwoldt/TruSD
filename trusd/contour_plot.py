@@ -13,12 +13,12 @@ contour_line_subtract = 1.92  # Somewhat strange value to subtract from maximum 
                               # Set to 0 to hide contour line
 
 
-def contour_plot(filename, num_trajectories, s_value, p_value, contour_line_subtract, save=True, show=False):
+def contour_plot(filename, num_trajectories, s_list, p_list, s_value, p_value, contour_line_subtract, save=True, show=False):
 
 	values = np.loadtxt(filename, delimiter=',', unpack=True)
 
-	xlist = np.arange(-0.08, 0.082, 0.002)
-	ylist = np.arange(0, 1.005, 0.005)
+	xlist = s_list #np.arange(-0.08, 0.082, 0.002)
+	ylist = p_list #np.arange(0, 1.005, 0.005)
 
 	X, Y = np.meshgrid(xlist, ylist)
 
