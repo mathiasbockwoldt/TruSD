@@ -30,9 +30,11 @@ source trusd_env/bin/activate
 
 Your command line prompt should change to reflect the activated environment.
 Now, you can install TruSD into that environment. You can also install other
-packages that you might think are useful for your work.
+packages that you might think are useful for your work. Make sure that pip is
+uprade to the latest version (first line in the following).
 
 ```sh
+pip install --upgrade pip
 git clone https://github.com/mathiasbockwoldt/TruSD.git
 cd TruSD
 pip3 install -e .
