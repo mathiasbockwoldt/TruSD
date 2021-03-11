@@ -2,21 +2,35 @@
 
 **Tr**ajectories **u**nder **S**election and **D**rift is an implementation of a method that co-infers selection coefficients and genetic drift from allele trajectories using a maximum-likelihood framework.
 
-If you find the software useful in your research please cite us:
+If you find the software useful in your research please cite this package.
 
-> Mathias Bockwoldt, Charlie Sinclair, David Waxman, and Toni I. Gossmann: TruSD: A python package to co-estimate selection and drift from allele trajectories. In preparation.
 
 ## Installation
 
-TruSD needs Python 3.5 or newer. Python 2 is *not* supported!
+TruSD needs Python 3.6 or newer. Python 2 is *not* supported!
 
-You should (after publication) be able to install from PyPI:
+Currently, the best way to install TruSD is to use a virtual environment and
+install TruSD from source.
+
+To setup a virtual environment, go to some folder where you want to have your
+virtual environment. This could be your home folder. The following command will
+create the virtual environment in the folder `trusd_env`. You can call the
+environment something else, but then you have to adapt the name also in the
+examples further below.
 
 ```sh
-pip3 install trusd
+python3 -m venv trusd_env
 ```
 
-You can also install it from source:
+This will take some seconds. After that, you can activate the environment:
+
+```sh
+source trusd_env/bin/activate
+```
+
+Your command line prompt should change to reflect the activated environment.
+Now, you can install TruSD into that environment. You can also install other
+packages that you might think are useful for your work.
 
 ```sh
 git clone https://github.com/mathiasbockwoldt/TruSD.git
@@ -24,35 +38,41 @@ cd TruSD
 pip3 install -e .
 ```
 
-If you **do not have root rights**, you can do a user specific install
+If you want to leave the environment again, simple run `deactivate` in your shell.
 
-```sh
-git clone https://github.com/mathiasbockwoldt/TruSD.git
-cd TruSD
-pip3 install --user -e .
-```
 
 ## Update
+
+In the TruSD folder run:
 
 ```sh
 git pull
 ```
 
+
 ## Running TruSD
 
-After installation, you should be able to run trusd from the command line:
+If you installed TruSD in a virtual environment, you have to activate it, before
+you can run TruSD. The command line prompt should show you, whether it is active.
+
+```sh
+source trusd_env/bin/activate
+```
+
+Please note, that you are not in the right path, you will have to give the full
+path:
+
+```sh
+source /path/to/trusd_env/bin/activate
+```
+
+Now you should be able to run TruSD and, for example, get some help.
 
 ```sh
 trusd --help
 ```
 
-if this does not work you might want to add inhomes/tonig/.bashrc :
-
-```sh
-export PATH=/homes/USERNAME/.local/bin:$PATH
-```
-
-You can also import the trusd module from your Python 3 script:
+You can also import the `trusd` module from your Python 3 script:
 
 ```python
 import trusd
@@ -64,3 +84,8 @@ You can start an example run with
 ```sh
 python3 min_working_example.py
 ```
+
+To get out of the virtual environment, simply run `deactivate` in your shell.
+
+If you want to run TruSD from a virtual environment on a cluster, please
+make the step `source /path/to/trusd_env/bin/activate` part of your job script.
