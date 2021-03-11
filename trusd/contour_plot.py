@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+
+DISPLAY_PRESENT = 'DISPLAY' in os.environ
+
+if not DISPLAY_PRESENT:
+	import matplotlib
+	matplotlib.use('agg')
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -48,8 +57,13 @@ def contour_plot(filename, num_trajectories, s_list, p_list, s_value, p_value, c
 		fig.savefig('{}.pdf'.format(filename.rsplit('.', maxsplit=1)[0]))
 
 	if show:
-		plt.show()
+		if DISPLAY_PRESENT:
+			plt.show()
+		else:
+			print('Python could not find a DISPLAY. Showing the plot is not supported.', file=sys.stderr)
+			if not save:
+				print('Try to save the plot instead.', file=sys.stderr)
 
 
 if __name__ == '__main__':
-	contour_plot(filename, num_trajectories, s_value, p_value, contour_line_subtract, False, True)
+	contour_plot(filename, num_trajectories, np.arange(-0.08, 0.082, 0.002), np.arange(0, 1.005, 0.005), s_value, p_value, contour_line_subtract, False, True)
