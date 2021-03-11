@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import datetime
+import json
+import os
 from functools import lru_cache
 
 import numpy as np
@@ -24,8 +27,10 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 	for n in range(genepop + 1):
 		for m in range(genepop + 1):
 			m_over_genepop = m / genepop
-			first_product = (m_over_genepop + selection_coefficient * m_over_genepop * (1 - m_over_genepop)) ** n
-			second_product = (1 - m_over_genepop - selection_coefficient * m_over_genepop * (1 - m_over_genepop)) ** (genepop - n)
+			first_product = (m_over_genepop + selection_coefficient * \
+							m_over_genepop * (1 - m_over_genepop)) ** n
+			second_product = (1 - m_over_genepop - selection_coefficient * \
+							m_over_genepop * (1 - m_over_genepop)) ** (genepop - n)
 			matrix[n, m] = comb(genepop, n) * first_product * second_product
 
 	matrix = np.linalg.matrix_power(matrix, num_generations)
@@ -81,10 +86,10 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 	# calculates the log-likelihood for each point on the grid
 	mat = np.full((slen, plen), np.nan, dtype=np.float64)
 	for i in range(slen):
-		s = selections[i]
+		sel = selections[i]
 		for j in range(plen):
-			p = proportions[j]
-			mat[i, j] = likelihood(s, p, time_points, trajectories, genepop)
+			prop = proportions[j]
+			mat[i, j] = likelihood(sel, prop, time_points, trajectories, genepop)
 
 	return mat
 
@@ -106,8 +111,8 @@ def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
 		Modified from https://stackoverflow.com/a/20624201
 		'''
 
-		with open(fname, 'r') as f:
-			for line in f:
+		with open(fname, 'r') as infile:
+			for line in infile:
 				try:
 					yield line.split(delimiter, skip_columns)[skip_columns]
 				except IndexError:
@@ -119,3 +124,42 @@ def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
 		delimiter=delimiter,
 		skiprows=skip_rows,
 		dtype='uint16')
+
+
+def write_info_file(input_file, output_file, command, pop_size, times, \
+					proportions, selection_coefficients):
+	'''
+	Writes an info file in json format with all necessary information to
+	replicate and to plot the results.
+	The json filename will be the same as `output_file` with the file name
+	extension set to `.json`.
+
+	@param input_file: The file name of the trajectory file
+	@param output_file: The file name of the output table
+	@param command: The command used to run TruSD
+	@param pop_size: The population size
+	@param times: List of time stamps
+	@param proportions: List of proportions
+	@param selection_coefficients: List of selection coefficients
+	'''
+
+	info = {}
+	info['description'] = ('This file contains the information for the TruSD '
+							'file saved in output_file.')
+	info['link'] = 'https://github.com/mathiasbockwoldt/TruSD'
+	info['citation'] = ('Mathias Bockwoldt, Charlie Sinclair, David Waxman, '
+						'and Toni I. Gossmann: TruSD: A python package to '
+						'co-estimate selection and drift from allele '
+						'trajectories. In preparation.')
+	info['input_file'] = input_file
+	info['output_file'] = output_file
+	info['datetime'] = datetime.datetime.now().replace(microsecond=0).isoformat()
+	info['command'] = command
+	info['population_size'] = pop_size
+	info['time_stamps'] = times
+	info['proportions'] = proportions
+	info['selection_coefficients'] = selection_coefficients
+
+	info_file = '{}.json'.format(os.path.splitext(output_file)[0])
+	with open(info_file, 'w') as out_stream:
+		json.dump(info, out_stream, indent=2)
