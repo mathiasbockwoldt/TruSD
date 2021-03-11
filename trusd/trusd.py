@@ -127,7 +127,7 @@ def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
 
 
 def write_info_file(input_file, output_file, command, pop_size, times, \
-					proportions, selection_coefficients):
+					proportions, selection_coefficients, delimiter):
 	'''
 	Writes an info file in json format with all necessary information to
 	replicate and to plot the results.
@@ -159,6 +159,7 @@ def write_info_file(input_file, output_file, command, pop_size, times, \
 	info['time_stamps'] = times
 	info['proportions'] = proportions
 	info['selection_coefficients'] = selection_coefficients
+	info['delimiter'] = delimiter
 
 	info_file = '{}.json'.format(os.path.splitext(output_file)[0])
 	with open(info_file, 'w') as out_stream:

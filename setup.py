@@ -14,7 +14,11 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/mathiasbockwoldt/TruSD',
     packages=setuptools.find_packages(),
-    entry_points={'console_scripts': ['trusd = trusd.cli:main']},
+    entry_points={'console_scripts': [
+                                    'trusd = trusd.cli:main',
+                                    'trusd-sim = trusd.cli:simulate',
+                                    'trusd-plot = trusd.cli:plot'
+                                    ]},
     install_requires=[
         'numpy>=1.15.1',
         'scipy>=0.16.0',

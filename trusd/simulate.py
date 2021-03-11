@@ -29,7 +29,7 @@ def simulate_trajectories(top_traj, time_points, sel_coeff, start_freq,
 	@param top_traj: TODO
 	@param time_points: List of time points to save in trajectories
 	@param sel_coeff: The selection coefficient to use
-	@param start_freq: The starting frequency of allel a
+	@param start_freq: The starting frequency of allele a
 	@param pop_size: The population size
 	@param generations: Number of generations to simulate
 	@returns: A dict with timepoints pointing to lists that contain the
@@ -73,7 +73,7 @@ def run_simulation(time_points, sum_of_trajectories=10, sel_coeff=0.05,
 	@param proportion: The proportion to use
 	@param pop_size: The population size
 	@param generations: Number of generations to simulate
-	@param start_freq: The starting frequency of allel a
+	@param start_freq: The starting frequency of allele a
 	@returns: A tuple with two lists of trajectories. The first one using the
 			given selection coefficient, the second one using a selection
 			coefficient of 0.
@@ -92,18 +92,19 @@ def run_simulation(time_points, sum_of_trajectories=10, sel_coeff=0.05,
 
 def run_group_of_simulations(sums_of_trajectories, time_points, sel_coeffs,
 							proportions, pop_size=200, generations=50,
-							start_freq=0.5):
+							start_freq=0.5, delimiter=','):
 	'''
 	Run a group of simulation with the given parameters. This will write the
 	simulation results to files with informative, but random file names.
 
 	@param sums_of_trajectories: TODO
-	@param time_points: List of time points to save in trajectories
+	@param time_points: List of numbers of time points to save in trajectories
 	@param sel_coeffs: List of selection coefficients to use
 	@param proportions: List of proportions to use
 	@param pop_size: The population size
 	@param generations: Number of generations to simulate
-	@param start_freq: The starting frequency of allel a
+	@param start_freq: The starting frequency of allele a
+	@param delimiter: The delimiter to use for the output tables
 	'''
 
 	for num_of_timepoints in time_points:
@@ -138,12 +139,18 @@ def run_group_of_simulations(sums_of_trajectories, time_points, sel_coeffs,
 							generations,
 							start_freq,
 							random_string(4)])), 'w') as out:
-						out.write('0,{}\n'.format(','.join(map(str, time_points))))
+
+						out.write('0{}{}\n'.format(
+							delimiter, delimiter.join(map(str, time_points)))
+						)
+
 						for i in range(len(m2[time_points[0]])):
-							values = ','.join(
+							values = delimiter.join(
 								[str(x) for x in [m2[p][i] for p in time_points]]
 							)
-							out.write('{},{}\n'.format(int(start_freq * pop_size), values))
+							out.write('{}{}{}\n'.format(
+								int(start_freq * pop_size), delimiter, values)
+							)
 
 
 if __name__ == '__main__':
