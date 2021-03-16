@@ -181,12 +181,8 @@ def simulate():
 						help='''delimiter for output files. Use "tab" or "space"
 						for these special characters. [default: %(default)s]''')
 
-	parser.add_argument('-o', '--outdir', metavar='out.csv', default='.',
+	parser.add_argument('-o', '--outdir', metavar='out/', default='.',
 						help='output directory [default: %(default)s]')
-
-	parser.add_argument('-n', '--noinfo', action='store_true',
-						help='''if set, no informational json file will be
-						written along with the result table.''')
 
 	parser.add_argument('-s', '--sums', metavar='s1,s2,...', default='10',
 						help='''list of sums of trajectories; give in the form
@@ -237,6 +233,7 @@ def simulate():
 		pop_size = args.genepop,
 		generations = args.generations,
 		start_freq = args.startfreq,
+		outdir = args.outdir,
 		delimiter = args.delimiter
 	)
 
@@ -299,14 +296,6 @@ def plot():
 						for information on the top of the plot.
 						[default: %(default)s]''')
 
-	parser.add_argument('-t', '--selcoeff', metavar='n', default='0.05', type=float,
-						help='''selection coefficient to mark on the plot
-						[default: %(default)s]''')
-
-	parser.add_argument('-q', '--prop', metavar='n', default='0.1', type=float,
-						help='''proportion to mark on the plot
-						[default: %(default)s]''')
-
 	parser.add_argument('-c', '--contourline', metavar='n', default=1.92, type=float,
 						help='''subtract this value to display the contour line.
 						Somewhat arbitrary; try various values. Set to 0 to
@@ -352,12 +341,10 @@ def plot():
 
 
 	tplot.contour_plot(
-		filename = args.infile,
+		input_file = args.infile,
 		num_trajectories = args.numtraj,
 		s_list = selec_list,
 		p_list = prop_list,
-		s_value = args.selcoeff,
-		p_value = args.prop,
 		contour_line_subtract = args.contourline,
 		delimiter = delimiter,
 		save = args.outfile,

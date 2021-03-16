@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-
+import os
 import sys
 import random
 from string import ascii_lowercase
@@ -92,7 +92,7 @@ def run_simulation(time_points, sum_of_trajectories=10, sel_coeff=0.05,
 
 def run_group_of_simulations(sums_of_trajectories, time_points, sel_coeffs,
 							proportions, pop_size=200, generations=50,
-							start_freq=0.5, delimiter=','):
+							start_freq=0.5, outdir='.', delimiter=','):
 	'''
 	Run a group of simulation with the given parameters. This will write the
 	simulation results to files with informative, but random file names.
@@ -104,6 +104,7 @@ def run_group_of_simulations(sums_of_trajectories, time_points, sel_coeffs,
 	@param pop_size: The population size
 	@param generations: Number of generations to simulate
 	@param start_freq: The starting frequency of allele a
+	@param outdir: The output directory to write to
 	@param delimiter: The delimiter to use for the output tables
 	'''
 
@@ -130,15 +131,17 @@ def run_group_of_simulations(sums_of_trajectories, time_points, sel_coeffs,
 						start_freq = start_freq
 					)
 
-					with open('{}_m2.csv'.format('_'.join(str(x) for x in [
-							num_of_timepoints,
-							sum_of_trajectories,
-							sel_coeff,
-							proportion,
-							pop_size,
-							generations,
-							start_freq,
-							random_string(4)])), 'w') as out:
+					filename = '{}_m2.csv'.format('_'.join(str(x) for x in [
+						num_of_timepoints,
+						sum_of_trajectories,
+						sel_coeff,
+						proportion,
+						pop_size,
+						generations,
+						start_freq,
+						random_string(4)]))
+
+					with open(os.path.join(outdir, filename), 'w') as out:
 
 						out.write('0{}{}\n'.format(
 							delimiter, delimiter.join(map(str, time_points)))
