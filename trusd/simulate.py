@@ -8,6 +8,16 @@ from string import ascii_lowercase
 import numpy as np
 
 
+def init_prng(seed):
+	'''
+	Initialize the pseudo random number generator.
+
+	@param seed: The seed to initialize with
+	'''
+
+	random.seed(seed)
+
+
 def random_string(length):
 	'''
 	Creates a random string of length `length` consisting of the letters a to z.

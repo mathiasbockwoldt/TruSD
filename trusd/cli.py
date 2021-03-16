@@ -213,6 +213,11 @@ def simulate():
 	parser.add_argument('-f', '--startfreq', metavar='float', default=0.5, type=float,
 						help='start frequency of allele a [default: %(default)s]')
 
+	parser.add_argument('--seed', metavar='int', type=int,
+						help='''seed for the pseudo random number generation for
+						reproducability. If none is given, the PRNG is
+						initialized according to Python defaults.''')
+
 	args = parser.parse_args()
 
 	sums_list = np.array(parse_string_as_list(args.sums, int, '--sums'))
@@ -224,6 +229,9 @@ def simulate():
 		args.delimiter = '\t'
 	elif args.delimiter == 'space':
 		args.delimiter = ' '
+
+	if args.seed:
+		sim.init_prng(args.seed)
 
 	sim.run_group_of_simulations(
 		sums_of_trajectories = sums_list,
