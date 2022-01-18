@@ -18,7 +18,7 @@ def init_prng(seed):
 	random.seed(seed)
 
 
-def random_string(length):
+def _random_string(length):
 	'''
 	Creates a random string of length `length` consisting of the letters a to z.
 
@@ -149,7 +149,7 @@ def run_group_of_simulations(sums_of_trajectories, time_points, sel_coeffs,
 						pop_size,
 						generations,
 						start_freq,
-						random_string(4)]))
+						_random_string(4)]))
 
 					with open(os.path.join(outdir, filename), 'w') as out:
 

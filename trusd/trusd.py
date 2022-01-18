@@ -38,7 +38,7 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 	return matrix
 
 
-def likelihood(selection_coefficient, proportion, time_points, trajectories, genepop):
+def single_likelihood(selection_coefficient, proportion, time_points, trajectories, genepop):
 	'''
 	Calculates the likelihood at a given point.
 
@@ -89,7 +89,7 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 		sel = selections[i]
 		for j in range(plen):
 			prop = proportions[j]
-			mat[i, j] = likelihood(sel, prop, time_points, trajectories, genepop)
+			mat[i, j] = single_likelihood(sel, prop, time_points, trajectories, genepop)
 
 	return mat
 
@@ -141,6 +141,7 @@ def write_info_file(input_file, output_file, command, pop_size, times, \
 	@param times: List of time stamps
 	@param proportions: List of proportions
 	@param selection_coefficients: List of selection coefficients
+	@returns The file name of the metadata file written
 	'''
 
 	info = {}
@@ -156,11 +157,13 @@ def write_info_file(input_file, output_file, command, pop_size, times, \
 	info['datetime'] = datetime.datetime.now().replace(microsecond=0).isoformat()
 	info['command'] = command
 	info['population_size'] = pop_size
-	info['time_stamps'] = times
-	info['proportions'] = proportions
-	info['selection_coefficients'] = selection_coefficients
+	info['time_stamps'] = list(times)
+	info['proportions'] = list(proportions)
+	info['selection_coefficients'] = list(selection_coefficients)
 	info['delimiter'] = delimiter
 
 	info_file = '{}.json'.format(os.path.splitext(output_file)[0])
 	with open(info_file, 'w') as out_stream:
 		json.dump(info, out_stream, indent=2)
+
+	return info_file

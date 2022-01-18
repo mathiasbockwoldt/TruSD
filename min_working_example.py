@@ -8,12 +8,16 @@ filename = 'traj_example.txt'
 delimiter = ','  # Delimiter of the fields in the trajectories file
 colskip = 2  # Numbers of columns to skip from left in the trajectories file.
              # Skip all columns that are not part of the actual trajectories.
-             # With your usual files, colskip should be 2.
+             # For the example file, colskip should be 2.
+
 genepop = 200  # NE
+
 # Properties (from 0 to 1 with 0.005 steps)
 properties = np.arange(0, 1.001, 0.005)
+
 # Selection coefficients (from -0.08 to 0.08 with 0.002 steps)
 sel_coeffs = np.arange(-0.08, 0.081, 0.002)
+
 time_steps = [0, 25, 50]  # Time steps
 outfile = 'outfile.txt'  # Output file name
 
@@ -32,3 +36,12 @@ results = trusd.likelihood_grid(trajectories,
 
 # Save results to "outfile"
 np.savetxt(outfile, results, delimiter=delimiter)
+
+# Save metadata to "outfile".json
+metadata_file = trusd.write_info_file(filename, outfile, __file__,
+                                      genepop, time_steps,
+                                      properties, sel_coeffs, delimiter)
+
+# Plot the results
+trusd.plot_from_file(metadata_file=metadata_file,
+                     contour_line_subtract=1.92, save=True)

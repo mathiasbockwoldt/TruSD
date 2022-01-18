@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import json
 import os
 import sys
 
@@ -119,9 +120,40 @@ def contour_plot(input_file, num_trajectories, s_list, p_list,
 				print('Try to save the plot instead.', file=sys.stderr)
 
 
+def plot_from_file(metadata_file, contour_line_subtract, marker=None,
+                   save=True, show=False):
+	'''
+	Plots a contour plot with parameters taken from a metadata (json) file.
+	The other parameters are forwarded to `contour_plot()`.
+
+	@param metadata_file: The file name of the TruSD output to plot
+	@param contour_line_subtract: difference to subtract to draw the contour line.
+		Experiement with different values. Set to 0 to remove the contour.
+	@param marker: tuple with the point to mark on the plot in the form
+		(s_value, p_value). If not given, the maximum point will be used.
+	@param save: if trueish, save the plot to disk. If this is a string, save to
+		that filename. Otherwise, save to `input_file` with pdf as extension.
+	@param show: if trueish, show interactive plot
+	'''
+
+	info = json.load(open(metadata_file))
+
+	contour_plot(
+		input_file = info['output_file'],
+		num_trajectories = info['population_size'],
+		s_list = info['selection_coefficients'],
+		p_list = info['proportions'],
+		contour_line_subtract = contour_line_subtract,
+		marker = marker,
+		delimiter = info['delimiter'],
+		save = save,
+		show = show
+	)
+
+
 if __name__ == '__main__':
 	contour_plot(
-		input_file = 'adxwdsdh.csv',
+		input_file = 'outfile.txt',
 		num_trajectories = 500,
 		s_list = np.arange(-0.08, 0.082, 0.002),
 		p_list = np.arange(0, 1.005, 0.005),

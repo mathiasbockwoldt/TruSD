@@ -22,6 +22,7 @@ setuptools.setup(
     install_requires=[
         'numpy>=1.15.1',
         'scipy>=0.16.0',
+        'matplotlib>=3.1.1',
     ],
     classifiers=[
         'Programming Language :: Python :: 3 :: Only',
