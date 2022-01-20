@@ -29,17 +29,29 @@ def _set_font_size():
 	plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
+def plot_from_data(input_file, delimiter=',', *args, **kwargs):
+	'''
+	Plot data from TruSD output file given parameters. Parameters not explained
+	here are explained in `contour_plot()`.
 
-def contour_plot(input_file, num_trajectories, s_list, p_list,
-				contour_line_subtract, marker=None,
-				delimiter=',', save=True, show=False):
+	@param input_file: The file name of the TruSD output to plot
+	@param delimiter: Column delimiter of the input file
+	'''
+
+	values = np.loadtxt(input_file, delimiter=delimiter, unpack=True)
+
+	contour_plot(values, *args, **kwargs)
+
+
+def contour_plot(values, num_trajectories, s_list, p_list,
+				contour_line_subtract, marker=None, save='', show=False):
 	'''
 	Plots a contour plot with given parameters. Note that this is just some
 	more or less easy way to quickly plot TruSD results. For more sophisticated
 	plotting parameters, you might want to copy the function to some local
 	script and modify it.
 
-	@param input_file: The file name of the TruSD output to plot
+	@param values: Numpy array with two dimensions with the data to plot #### TODO: Describe dimensions
 	@param num_trajectories: The number of trajectories. This is only information
 		for the title of the plot
 	@param s_list: list of selection coefficients
@@ -48,13 +60,9 @@ def contour_plot(input_file, num_trajectories, s_list, p_list,
 		Experiement with different values. Set to 0 to remove the contour.
 	@param marker: tuple with the point to mark on the plot in the form
 		(s_value, p_value). If not given, the maximum point will be used.
-	@param delimiter: Column delimiter of the input file
-	@param save: if trueish, save the plot to disk. If this is a string, save to
-		that filename. Otherwise, save to `input_file` with pdf as extension.
+	@param save: if this is a filename, save the plot to disk to this path.
 	@param show: if trueish, show interactive plot
 	'''
-
-	values = np.loadtxt(input_file, delimiter=delimiter, unpack=True)
 
 	if marker is None:
 		rows = values.shape[1]
@@ -120,7 +128,7 @@ def contour_plot(input_file, num_trajectories, s_list, p_list,
 				print('Try to save the plot instead.', file=sys.stderr)
 
 
-def plot_from_file(metadata_file, contour_line_subtract, marker=None,
+def plot_from_metadata(metadata_file, contour_line_subtract, marker=None,
                    save=True, show=False):
 	'''
 	Plots a contour plot with parameters taken from a metadata (json) file.
@@ -138,27 +146,23 @@ def plot_from_file(metadata_file, contour_line_subtract, marker=None,
 
 	info = json.load(open(metadata_file))
 
-	contour_plot(
+	plot_from_data(
 		input_file = info['output_file'],
+		delimiter = info['delimiter'],
 		num_trajectories = info['population_size'],
 		s_list = info['selection_coefficients'],
 		p_list = info['proportions'],
 		contour_line_subtract = contour_line_subtract,
 		marker = marker,
-		delimiter = info['delimiter'],
 		save = save,
 		show = show
 	)
 
 
 if __name__ == '__main__':
-	contour_plot(
-		input_file = 'outfile.txt',
-		num_trajectories = 500,
-		s_list = np.arange(-0.08, 0.082, 0.002),
-		p_list = np.arange(0, 1.005, 0.005),
+	plot_from_metadata(
+		input_file = 'outfile.json',
 		contour_line_subtract = 1.92,
-		delimiter = ',',
 		save = True,
 		show = True
 	)

@@ -6,7 +6,7 @@ long_description = open('README.md').read()
 
 setuptools.setup(
     name='TruSD',
-    version='0.0.1',
+    version='0.0.2',
     author='Mathias Bockwoldt',
     author_email='mathias.bockwoldt@gmail.com',
     description='TruSD co-infers selection coefficients and genetic drift from allele trajectories using a maximum-likelihood framework.',

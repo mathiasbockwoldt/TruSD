@@ -71,14 +71,19 @@ def main():
 						(left) [default: %(default)s]''')
 
 	parser.add_argument('-o', '--outfile', metavar='out.csv', default='outfile.csv',
-						help='output file [default: %(default)s]')
+						help='''output file. Give an empty string to not save the
+						result matrix. [default: %(default)s]''')
+
+	parser.add_argument('-q', '--plotfile', metavar='out.pdf', default='',
+						help='''plot output file. Give an empty string to not
+						create a plot. [default: ""]''')
 
 	parser.add_argument('-n', '--noinfo', action='store_true',
-						help='''if set, no informational json file will be
+						help='''if set, no json file with metadata will be
 						written along with the result table.''')
 
 	parser.add_argument('-g', '--genepop', metavar='int', default=200, type=int,
-						help='population size [default: %(default)s]')
+						help='(effective) population size [default: %(default)s]')
 
 	parser.add_argument('-p', '--proportion', metavar='start,stop,step',
 						default='0,1,0.005',
@@ -142,17 +147,19 @@ def main():
 		skip_columns=args.colskip
 	)
 
-	results = trusd.likelihood_grid(
+	results = trusd.run_analysis(
 		trajectories,
 		args.genepop,
 		prop_list,
 		selec_list,
-		times
+		times,
+		args.outfile,
+		args.plotfile
 	)
 
-	np.savetxt(args.outfile, results, delimiter=',')
+	print(f'Best (s, p) is ({results[0]:.5f}, {results[1]:.5f})')
 
-	if not args.noinfo:
+	if args.outfile or not args.noinfo:
 		trusd.write_info_file(
 			input_file = args.infile,
 			output_file = args.outfile,

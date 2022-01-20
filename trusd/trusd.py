@@ -8,6 +8,8 @@ from functools import lru_cache
 import numpy as np
 from scipy.special import comb
 
+from .plot import contour_plot
+
 
 @lru_cache(maxsize=None)
 def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
@@ -45,7 +47,7 @@ def single_likelihood(selection_coefficient, proportion, time_points, trajectori
 	@param selection_coefficient: The selection coefficient as float
 	@param proportion: The proportion as float
 	@param time_points: The time points to consider as list of integers
-	@param trajectories: The trajectories as numpy array with shape (???) TODO!!!################
+	@param trajectories: The trajectories as numpy array with shape (num_samples, num_time_points)
 	@param genepop: Gene population as integer
 	@returns: The likelihood for the given point as float
 	'''
@@ -72,7 +74,7 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 	Calculates the likelihood for each point of a grid of selection coefficients
 	and proportions.
 
-	@param trajectories: The trajectories as numpy array with shape (???) TODO!!!################
+	@param trajectories: The trajectories as numpy array with shape (num_samples, num_time_points)
 	@param genepop: Gene population as integer
 	@param proportions: The proportions as list of floats
 	@param selections: The selection coefficients as list of floats
@@ -92,6 +94,60 @@ def likelihood_grid(trajectories, genepop, proportions, selections, time_points)
 			mat[i, j] = single_likelihood(sel, prop, time_points, trajectories, genepop)
 
 	return mat
+
+
+def run_analysis(trajectories, genepop, proportions, selections, time_points, save_output='outfile.txt', save_plot='outfile.pdf'):
+	'''
+	Run an analysis. This is the central function in TruSD.
+
+	@param trajectories: The trajectories as numpy array with shape (num_samples, num_time_points)
+	@param genepop: Gene population as integer
+	@param proportions: The proportions as list of floats
+	@param selections: The selection coefficients as list of floats
+	@param time_points: The time points to consider as list of integers
+	@param save_output: If this is a filename, save the output matrix to this file.
+	@param save_plot: If this is a filename, save a plot of the output to this file.
+	@returns: The best s and p value
+	'''
+
+	trajectories = test_for_rel_abs(trajectories, genepop)
+
+	result_matrix = likelihood_grid(trajectories, genepop, proportions, selections, time_points)
+
+	if save_output:
+		np.savetxt(save_output, result_matrix, delimiter=',')
+
+	if save_plot:
+		contour_plot(result_matrix.T, genepop, selections, proportions, 1.92, save=save_plot, show=False)
+
+	rows = result_matrix.shape[1]
+	max_value = result_matrix.argmax()
+	s_value = selections[max_value // rows]
+	p_value = proportions[max_value % rows]
+
+	return s_value, p_value
+
+
+def test_for_rel_abs(trajectories, genepop):
+	'''
+	Test the if the input is relative or absolute. If the input is relative,
+	multiply it with 2N (to make it absolute), if it is absolute, check that
+	no value is above 2N.
+
+	@param trajectories: The trajectories as numpy array to test
+	@param genepop: Gene population as integer
+	@returns: Absolute `trajectories`
+	'''
+
+	if np.logical_and(0 >= trajectories, trajectories >= 1).all():
+		# If all values are between 0 and 1, we assume the values to be relative
+		trajectories *= genepop * 2
+	else:
+		# Absolute values otherwise
+		if np.any(trajectories > genepop * 2):
+			raise ValueError(f'The input trajectories contain values that are larger than 2N (two times the population size. This is not allowed!')
+
+	return trajectories
 
 
 def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
