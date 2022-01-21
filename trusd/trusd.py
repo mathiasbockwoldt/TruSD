@@ -3,12 +3,16 @@
 import datetime
 import json
 import os
+import sys
 from functools import lru_cache
 
 import numpy as np
 from scipy.special import comb
 
 from .plot import contour_plot
+
+
+np.seterr(divide='raise')
 
 
 @lru_cache(maxsize=None)
@@ -64,7 +68,11 @@ def single_likelihood(selection_coefficient, proportion, time_points, trajectori
 			col = trajectories[trajectory, time_index]
 			a = transition_prob_sel[row, col]
 			b = transition_prob_neut[row, col]
-			result += np.log((proportion * a + (1 - proportion) * b))
+			try:
+				result += np.log((proportion * a + (1 - proportion) * b))
+			except FloatingPointError:
+				print(f'There was an error in single_likelihood. proportion={proportion}; a={a}; b={b}.\n Could it be that the first trajectory in the input contains a 0.0 (zero)? The first trajectory must not contain a zero.')
+				raise
 
 	return result
 
@@ -139,15 +147,15 @@ def test_for_rel_abs(trajectories, genepop):
 	@returns: Absolute `trajectories`
 	'''
 
-	if np.logical_and(0 >= trajectories, trajectories >= 1).all():
+	if np.logical_and(0 <= trajectories, trajectories <= 1).all():
 		# If all values are between 0 and 1, we assume the values to be relative
-		trajectories *= genepop * 2
+		trajectories = np.around(trajectories * genepop * 2)
 	else:
 		# Absolute values otherwise
 		if np.any(trajectories > genepop * 2):
-			raise ValueError(f'The input trajectories contain values that are larger than 2N (two times the population size. This is not allowed!')
+			raise ValueError(f'The input trajectories contain values that are larger than 2N (two times the population size). This is not allowed!')
 
-	return trajectories
+	return trajectories.astype(np.uint16)
 
 
 def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
@@ -179,7 +187,7 @@ def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
 		__strip_n_cols(fname, delimiter, skip_columns),
 		delimiter=delimiter,
 		skiprows=skip_rows,
-		dtype='uint16')
+		dtype=np.float32)
 
 
 def write_info_file(input_file, output_file, command, pop_size, times, \
