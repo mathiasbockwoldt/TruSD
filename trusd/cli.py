@@ -147,7 +147,7 @@ def main():
 		skip_columns=args.colskip
 	)
 
-	results = trusd.run_analysis(
+	best_s, best_p = trusd.run_analysis(
 		trajectories,
 		args.popsize,
 		prop_list,
@@ -157,7 +157,7 @@ def main():
 		args.plotfile
 	)
 
-	print(f'Best (s, p) is ({results[0]:.5f}, {results[1]:.5f})')
+	print(f'For {args.infile}, N={args.popsize}, times={args.times}, best (s, p) is ({best_s:.5f}, {best_p:.5f})')
 
 	if args.outfile or not args.noinfo:
 		trusd.write_info_file(
@@ -168,6 +168,7 @@ def main():
 			times = times,
 			proportions = list(prop_list),
 			selection_coefficients = list(selec_list),
+			best = {'s': best_s, 'p': best_p},
 			delimiter = args.delimiter
 		)
 
