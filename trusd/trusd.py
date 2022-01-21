@@ -139,8 +139,8 @@ def run_analysis(trajectories, genepop, proportions, selections, time_points, sa
 def test_for_rel_abs(trajectories, genepop):
 	'''
 	Test the if the input is relative or absolute. If the input is relative,
-	multiply it with 2N (to make it absolute), if it is absolute, check that
-	no value is above 2N.
+	multiply it with N (to make it absolute), if it is absolute, check that
+	no value is above N.
 
 	@param trajectories: The trajectories as numpy array to test
 	@param genepop: Gene population as integer
@@ -149,11 +149,11 @@ def test_for_rel_abs(trajectories, genepop):
 
 	if np.logical_and(0 <= trajectories, trajectories <= 1).all():
 		# If all values are between 0 and 1, we assume the values to be relative
-		trajectories = np.around(trajectories * genepop * 2)
+		trajectories = np.around(trajectories * genepop)
 	else:
 		# Absolute values otherwise
-		if np.any(trajectories > genepop * 2):
-			raise ValueError(f'The input trajectories contain values that are larger than 2N (two times the population size). This is not allowed!')
+		if np.any(trajectories > genepop):
+			raise ValueError(f'The input trajectories contain values that are larger than N (the population size). This is not allowed!')
 
 	return trajectories.astype(np.uint16)
 
