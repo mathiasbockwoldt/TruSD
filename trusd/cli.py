@@ -82,7 +82,7 @@ def main():
 						help='''if set, no json file with metadata will be
 						written along with the result table.''')
 
-	parser.add_argument('-g', '--genepop', metavar='int', default=200, type=int,
+	parser.add_argument('-N', '--popsize', metavar='int', default=200, type=int,
 						help='(effective) population size [default: %(default)s]')
 
 	parser.add_argument('-p', '--proportion', metavar='start,stop,step',
@@ -149,7 +149,7 @@ def main():
 
 	results = trusd.run_analysis(
 		trajectories,
-		args.genepop,
+		args.popsize,
 		prop_list,
 		selec_list,
 		times,
@@ -164,7 +164,7 @@ def main():
 			input_file = args.infile,
 			output_file = args.outfile,
 			command = ' '.join(sys.argv),
-			pop_size = args.genepop,
+			pop_size = args.popsize,
 			times = times,
 			proportions = list(prop_list),
 			selection_coefficients = list(selec_list),
@@ -211,7 +211,7 @@ def simulate():
 						p1,p2,p3,... without whitespace, where px are integers
 						or floats. [default: %(default)s]''')
 
-	parser.add_argument('-g', '--genepop', metavar='int', default=200, type=int,
+	parser.add_argument('-N', '--popsize', metavar='int', default=200, type=int,
 						help='population size [default: %(default)s]')
 
 	parser.add_argument('-G', '--generations', metavar='int', default=50, type=int,
@@ -245,7 +245,7 @@ def simulate():
 		time_points = times_list,
 		sel_coeffs = selec_list,
 		proportions = prop_list,
-		pop_size = args.genepop,
+		pop_size = args.popsize,
 		generations = args.generations,
 		start_freq = args.startfreq,
 		outdir = args.outdir,
