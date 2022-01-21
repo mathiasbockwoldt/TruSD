@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 
+import re
 import setuptools
 
 long_description = open('README.md').read()
 
+version = re.search(r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                    open('trusd/__init__.py').read()).group(1)
+
 setuptools.setup(
     name='TruSD',
-    version='0.0.2',
+    version=version,
     author='Mathias Bockwoldt',
     author_email='mathias.bockwoldt@gmail.com',
     description='TruSD co-infers selection coefficients and genetic drift from allele trajectories using a maximum-likelihood framework.',

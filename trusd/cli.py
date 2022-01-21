@@ -116,6 +116,8 @@ def main():
 						without whitespace, where tx are integers.
 						[default: %(default)s]''')
 
+	parser.add_argument('--version', action='version', version=f'%(prog)s version {trusd.__version__}')
+
 	args = parser.parse_args()
 
 	if args.proplist:
@@ -157,7 +159,7 @@ def main():
 		args.plotfile
 	)
 
-	print(f'For {args.infile}, N={args.popsize}, times={args.times}, best (s, p) is ({best_s:.5f}, {best_p:.5f})')
+	print(f'For {args.infile}, N={args.popsize}, times=({args.times}), best (s, p) is ({best_s:.5f}, {best_p:.5f})')
 
 	if args.outfile or not args.noinfo:
 		trusd.write_info_file(
