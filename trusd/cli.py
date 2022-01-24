@@ -120,6 +120,13 @@ def main():
 
 	args = parser.parse_args()
 
+	if args.popsize > 200:
+		print('''WARNING: Population sizes above 200 yield wrong results due to floating point
+         errors. The script will likely crash.''', file=sys.stderr)
+	elif args.popsize > 130:
+		print('''WARNING: Population sizes above 130 yield imprecise results du to floating point
+         errors. Keep this in mind.''', file=sys.stderr)
+
 	if args.proplist:
 		prop_list = np.array(
 			parse_string_as_list(args.proplist, float, '--proplist')

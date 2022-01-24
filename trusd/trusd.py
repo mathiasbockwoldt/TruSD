@@ -12,7 +12,7 @@ from scipy.special import comb
 from .plot import contour_plot
 
 
-np.seterr(divide='raise')
+np.seterr(divide='raise', under='raise')
 
 
 @lru_cache(maxsize=None)
@@ -33,11 +33,17 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 	for n in range(genepop + 1):
 		for m in range(genepop + 1):
 			m_over_genepop = m / genepop
-			first_product = (m_over_genepop + selection_coefficient * \
-							m_over_genepop * (1 - m_over_genepop)) ** n
-			second_product = (1 - m_over_genepop - selection_coefficient * \
-							m_over_genepop * (1 - m_over_genepop)) ** (genepop - n)
-			matrix[n, m] = comb(genepop, n) * first_product * second_product
+			try:
+				first_product = (m_over_genepop + selection_coefficient * \
+								m_over_genepop * (1 - m_over_genepop)) ** n
+				second_product = (1 - m_over_genepop - selection_coefficient * \
+								m_over_genepop * (1 - m_over_genepop)) ** (genepop - n)
+				matrix[n, m] = comb(genepop, n) * first_product * second_product
+			except FloatingPointError:
+				# If genepop is too big, x**n or x**genepop may become very small
+				# (under approx.10**-308) or comb(genepop, n) may become infinity.
+				# In this case, we set the matrix value to 0.
+				matrix[n, m] = 0
 
 	matrix = np.linalg.matrix_power(matrix, num_generations)
 
