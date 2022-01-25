@@ -75,7 +75,7 @@ def single_likelihood(selection_coefficient, proportion, time_points, trajectori
 			a = transition_prob_sel[row, col]
 			b = transition_prob_neut[row, col]
 			try:
-				result += np.log((proportion * a + (1 - proportion) * b))
+				result += np.log(1e-307 + (proportion * a + (1 - proportion) * b))
 			except FloatingPointError:
 				print(f'There was an error in single_likelihood. proportion={proportion}; a={a}; b={b}.\n Could it be that the first trajectory in the input contains a 0.0 (zero)? The first trajectory must not contain a zero.')
 				raise
@@ -160,12 +160,6 @@ def test_for_rel_abs(trajectories, genepop):
 		# Absolute values otherwise
 		if np.any(trajectories > genepop):
 			raise ValueError(f'The input trajectories contain values that are larger than N (the population size). This is not allowed!')
-
-	zeroes_first_col = trajectories[:, 0] == 0
-	trajectories[zeroes_first_col, 0] = 1
-
-	max_first_col = trajectories[:, 0] == genepop
-	trajectories[max_first_col, 0] = genepop - 1
 
 	return trajectories.astype(np.uint16)
 
