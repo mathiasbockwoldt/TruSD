@@ -161,6 +161,12 @@ def test_for_rel_abs(trajectories, genepop):
 		if np.any(trajectories > genepop):
 			raise ValueError(f'The input trajectories contain values that are larger than N (the population size). This is not allowed!')
 
+	zeroes_first_col = trajectories[:, 0] == 0
+	trajectories[zeroes_first_col, 0] = 1
+
+	max_first_col = trajectories[:, 0] == genepop
+	trajectories[max_first_col, 0] = genepop - 1
+
 	return trajectories.astype(np.uint16)
 
 
