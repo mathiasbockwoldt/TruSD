@@ -121,7 +121,7 @@ def run_analysis(trajectories, genepop, proportions, selections, time_points, sa
 	@param time_points: The time points to consider as list of integers
 	@param save_output: If this is a filename, save the output matrix to this file.
 	@param save_plot: If this is a filename, save a plot of the output to this file.
-	@returns: The best s and p value
+	@returns: The best s, p, and likelihood values
 	'''
 
 	trajectories = test_for_rel_abs(trajectories, genepop)
@@ -132,14 +132,15 @@ def run_analysis(trajectories, genepop, proportions, selections, time_points, sa
 		np.savetxt(save_output, result_matrix, delimiter=',')
 
 	if save_plot:
-		contour_plot(result_matrix.T, genepop, selections, proportions, 1.92, save=save_plot, show=False)
+		contour_plot(result_matrix.T, selections, proportions, 1.92, save=save_plot, show=False)
 
 	rows = result_matrix.shape[1]
 	max_value = result_matrix.argmax()
 	s_value = selections[max_value // rows]
 	p_value = proportions[max_value % rows]
+	likelihood = result_matrix[max_value // rows, max_value % rows]
 
-	return s_value, p_value
+	return s_value, p_value, likelihood
 
 
 def test_for_rel_abs(trajectories, genepop):
@@ -196,8 +197,9 @@ def read_trajectory_file(fname, delimiter=',', skip_rows=1, skip_columns=0):
 		dtype=np.float32)
 
 
-def write_info_file(input_file, output_file, command, pop_size, times, \
-					proportions, selection_coefficients, best, delimiter):
+def write_info_file(input_file, output_file, command, pop_size, \
+					num_trajectories, times, proportions, \
+					selection_coefficients, best, delimiter):
 	'''
 	Writes an info file in json format with all necessary information to
 	replicate and to plot the results.
@@ -208,10 +210,11 @@ def write_info_file(input_file, output_file, command, pop_size, times, \
 	@param output_file: The file name of the output table
 	@param command: The command used to run TruSD
 	@param pop_size: The population size
+	@param num_trajectories: The number of input trajectories
 	@param times: List of time stamps
 	@param proportions: List of proportions
 	@param selection_coefficients: List of selection coefficients
-	@param best: dict with best p and s
+	@param best: dict with best p, s, and likelihood
 	@param delimiter: Column delimiter for output_file
 	@returns The file name of the metadata file written
 	'''
@@ -229,11 +232,12 @@ def write_info_file(input_file, output_file, command, pop_size, times, \
 	info['datetime'] = datetime.datetime.now().replace(microsecond=0).isoformat()
 	info['command'] = command
 	info['population_size'] = pop_size
+	info['num_trajectories'] = num_trajectories
+	info['best'] = best
+	info['delimiter'] = delimiter
 	info['time_stamps'] = list(times)
 	info['proportions'] = list(proportions)
 	info['selection_coefficients'] = list(selection_coefficients)
-	info['best'] = best
-	info['delimiter'] = delimiter
 
 	info_file = '{}.json'.format(os.path.splitext(output_file)[0])
 	with open(info_file, 'w') as out_stream:

@@ -28,20 +28,20 @@ trajectories = trusd.read_trajectory_file(filename,
                                           skip_columns=colskip)
 
 # Calculate results (this step will take a lot of time!)
-best_s, best_p = trusd.run_analysis(trajectories,
-                                    genepop=genepop,
-                                    proportions=properties,
-                                    selections=sel_coeffs,
-                                    time_points=time_steps,
-                                    save_output=outfile)
+best_s, best_p, best_l = trusd.run_analysis(trajectories,
+                                            genepop=genepop,
+                                            proportions=properties,
+                                            selections=sel_coeffs,
+                                            time_points=time_steps,
+                                            save_output=outfile)
 
-print(f'Best (s, p) is ({best_s:.5f}, {best_p:.5f})')
+print(f'Best (s, p) is ({best_s:.5f}, {best_p:.5f}) with likelihood {best_l}')
 
 # Save metadata to "outfile".json
 metadata_file = trusd.write_info_file(filename, outfile, __file__,
-                                      genepop, time_steps,
+                                      genepop, len(trajectories), time_steps,
                                       properties, sel_coeffs,
-                                      {'s': best_s, 'p': best_p},
+                                      {'s': best_s, 'p': best_p, 'likelihood': best_l},
                                       delimiter)
 
 plot_file = '{}.pdf'.format(outfile.rsplit('.', maxsplit=1)[0])

@@ -43,7 +43,7 @@ def plot_from_data(input_file, delimiter=',', *args, **kwargs):
 	contour_plot(values, *args, **kwargs)
 
 
-def contour_plot(values, num_trajectories, s_list, p_list,
+def contour_plot(values, s_list, p_list,
 				contour_line_subtract, marker=None, save='', show=False):
 	'''
 	Plots a contour plot with given parameters. Note that this is just some
@@ -52,8 +52,6 @@ def contour_plot(values, num_trajectories, s_list, p_list,
 	script and modify it.
 
 	@param values: Numpy array with two dimensions with the data to plot #### TODO: Describe dimensions
-	@param num_trajectories: The number of trajectories. This is only information
-		for the title of the plot
 	@param s_list: list of selection coefficients
 	@param p_list: list of proportions
 	@param contour_line_subtract: difference to subtract to draw the contour line.
@@ -103,9 +101,7 @@ def contour_plot(values, num_trajectories, s_list, p_list,
 
 	ax.plot(s_value, p_value, color='#ff0000', marker='o')  # markersize=
 
-	ax.set_title('Num of trajectories = {}, s = {}, p = {}'.format(
-		num_trajectories, s_value, p_value
-	))
+	ax.set_title('s = {}, p = {}'.format(s_value, p_value))
 	ax.set_xlabel('Selection coefficient, s')
 	ax.set_ylabel('Proportion of selected sites, p')
 
@@ -149,7 +145,6 @@ def plot_from_metadata(metadata_file, contour_line_subtract, marker=None,
 	plot_from_data(
 		input_file = info['output_file'],
 		delimiter = info['delimiter'],
-		num_trajectories = info['population_size'],
 		s_list = info['selection_coefficients'],
 		p_list = info['proportions'],
 		contour_line_subtract = contour_line_subtract,

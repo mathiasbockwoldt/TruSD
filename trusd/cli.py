@@ -134,6 +134,12 @@ def main():
 	else:
 		prop = parse_string_as_list(args.proportion, float, '--proportion', 3)
 		prop_list = np.arange(prop[0], prop[1] + prop[2], prop[2])
+	if min(prop_list) < 0:
+		print('The smallest p must be greater than or equal to 0', file=sys.stderr)
+		sys.exit()
+	if max(prop_list) > 1:
+		print('The largest p must be less than or equal to 1', file=sys.stderr)
+		sys.exit()
 
 	if args.seleclist:
 		selec_list = np.array(
@@ -156,7 +162,7 @@ def main():
 		skip_columns=args.colskip
 	)
 
-	best_s, best_p = trusd.run_analysis(
+	best_s, best_p, best_l = trusd.run_analysis(
 		trajectories,
 		args.popsize,
 		prop_list,
@@ -166,14 +172,15 @@ def main():
 		args.plotfile
 	)
 
-	print(f'For {args.infile}, N={args.popsize}, times=({args.times}), best (s, p) is ({best_s:.5f}, {best_p:.5f})')
+	print(f'For {args.infile}, N={args.popsize}, times=({args.times}), best (s, p) is ({best_s:.5f}, {best_p:.5f}) with likelihood {best_l:.5f}')
 
-	if args.outfile or not args.noinfo:
+	if args.outfile and not args.noinfo:
 		trusd.write_info_file(
 			input_file = args.infile,
 			output_file = args.outfile,
 			command = ' '.join(sys.argv),
 			pop_size = args.popsize,
+			num_trajectories = len(trajectories),
 			times = times,
 			proportions = list(prop_list),
 			selection_coefficients = list(selec_list),
@@ -316,11 +323,6 @@ def plot():
 						Not needed, when `--infofile` is given, which will
 						override this value. [default: %(default)s]''')
 
-	parser.add_argument('-n', '--numtraj', metavar='n', default=500, type=int,
-						help='''number of trajectories. This value is only used
-						for information on the top of the plot.
-						[default: %(default)s]''')
-
 	parser.add_argument('-c', '--contourline', metavar='n', default=1.92, type=float,
 						help='''subtract this value to display the contour line.
 						Somewhat arbitrary; try various values. Set to 0 to
@@ -367,7 +369,6 @@ def plot():
 
 	tplot.contour_plot(
 		input_file = args.infile,
-		num_trajectories = args.numtraj,
 		s_list = selec_list,
 		p_list = prop_list,
 		contour_line_subtract = args.contourline,
