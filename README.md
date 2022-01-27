@@ -14,7 +14,7 @@ We suggest to use a [virtual environment](https://docs.python.org/3/tutorial/ven
 for use of TruSD. To install TruSD, run:
 
 ```sh
-pip3 install trusd
+pip3 install trusd  # add --user to install only for the user
 ```
 
 This will install TruSD as importable module and three command line tools,
