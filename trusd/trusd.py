@@ -12,9 +12,6 @@ from scipy.special import comb
 from .plot import contour_plot
 
 
-np.seterr(divide='raise', under='raise')
-
-
 @lru_cache(maxsize=None)
 def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 	'''
@@ -30,6 +27,8 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 
 	matrix = np.full((genepop + 1, genepop + 1), np.nan, dtype=np.float64)
 
+	old_err = np.seterr(divide='raise', under='raise')
+
 	for n in range(genepop + 1):
 		for m in range(genepop + 1):
 			m_over_genepop = m / genepop
@@ -44,6 +43,8 @@ def wright_fisher_trans_matrix(selection_coefficient, num_generations, genepop):
 				# (under approx.10**-308) or comb(genepop, n) may become infinity.
 				# In this case, we set the matrix value to 0.
 				matrix[n, m] = 0
+
+	np.seterr(**old_err)
 
 	matrix = np.linalg.matrix_power(matrix, num_generations)
 
@@ -69,6 +70,8 @@ def single_likelihood(selection_coefficient, proportion, time_points, trajectori
 		transition_prob_sel = wright_fisher_trans_matrix(selection_coefficient, timepoint, genepop)
 		transition_prob_neut = wright_fisher_trans_matrix(0, timepoint, genepop)
 
+		old_err = np.seterr(divide='raise', under='raise')
+
 		for trajectory in range(len(trajectories)):
 			row = trajectories[trajectory, time_index + 1]
 			col = trajectories[trajectory, time_index]
@@ -79,6 +82,10 @@ def single_likelihood(selection_coefficient, proportion, time_points, trajectori
 			except FloatingPointError:
 				print(f'There was an error in single_likelihood. proportion={proportion}; a={a}; b={b}.\n Could it be that the first trajectory in the input contains a 0.0 (zero)? The first trajectory must not contain a zero.')
 				raise
+
+		np.seterr(**old_err)
+
+
 
 	return result
 
